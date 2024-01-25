@@ -36,8 +36,8 @@
         radius: 20,
         color: "#FF0000",
         speed: 5,
-        jumpHeight: -200, // Adjust the jump height as needed (negative to go up)
-        gravity: 5, // Adjust the gravity as needed (positive to pull down)
+        jumpHeight: -10, // Adjust the jump height as needed (negative to go up)
+        gravity: 1, // Adjust the gravity as needed (positive to pull down)
         isJumping: false,
     };
 
@@ -71,12 +71,30 @@
     });
 
     document.addEventListener("keydown", function(event) {
-        if (event.key === " ") { // Spacebar
-            if (!player.isJumping) {
-                player.isJumping = true;
-            }
+        if (event.key === " " && !player.isJumping) { // Spacebar
+            player.isJumping = true;
+            jump();
         }
     });
+
+    // Jump function
+    function jump() {
+        if (player.isJumping) {
+            player.y += player.jumpHeight; // Increment jump height
+
+            // Check if player is above the ground level
+            if (player.y > canvas.height - player.radius - platform.height) {
+                player.isJumping = false; // Stop jumping when reaching the ground
+                player.y = canvas.height - player.radius - platform.height; // Ensure the ball is on the platform
+            } else {
+                setTimeout(function() {
+                    // Apply gravity after a short delay to simulate jump and fall
+                    player.y += player.gravity;
+                    jump();
+                }, 20);
+            }
+        }
+    }
 
     // Game loop
     function gameLoop() {
@@ -92,19 +110,6 @@
             player.x += player.speed;
         } else if (leftPressed) {
             player.x -= player.speed;
-        }
-
-        // Handle jumping
-        if (player.isJumping) {
-            player.y += player.jumpHeight; // Move upward during jump
-
-            // Check if player is above the ground level
-            if (player.y < canvas.height - player.radius - platform.height) {
-                player.isJumping = false; // Stop jumping when reaching the ground
-            }
-        } else if (player.y < canvas.height - player.radius - platform.height) {
-            // Apply gravity if not jumping and above the ground level
-            player.y += player.gravity;
         }
 
         // Draw the player
