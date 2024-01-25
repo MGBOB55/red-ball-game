@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Ball 4-like Game</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+
+<script>
+    // Get the canvas and its context
+    var canvas = document.getElementById("gameCanvas");
+    var ctx = canvas.getContext("2d");
+
+    // Define the player (red ball) properties
+    var player = {
+        x: 50,
+        y: 50,
+        radius: 20,
+        color: "#FF0000",
+        speed: 5
+    };
+
+    // Handle keyboard input
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowRight") {
+            player.x += player.speed;
+        } else if (event.key === "ArrowLeft") {
+            player.x -= player.speed;
+        }
+        // You can add more controls as needed (e.g., ArrowUp for jumping)
+    });
+
+    // Game loop
+    function gameLoop() {
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the player
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = player.color;
+        ctx.fill();
+        ctx.closePath();
+
+        // Request the next frame
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Start the game loop
+    gameLoop();
+</script>
+
+</body>
+</html>
