@@ -58,11 +58,6 @@
             rightPressed = true;
         } else if (event.key === "ArrowLeft") {
             leftPressed = true;
-        } else if (event.key === " ") { // Spacebar
-            if (!player.isJumping) {
-                player.isJumping = true;
-                player.y -= player.jumpHeight; // Move upward during jump
-            }
         }
     });
 
@@ -71,6 +66,15 @@
             rightPressed = false;
         } else if (event.key === "ArrowLeft") {
             leftPressed = false;
+        }
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === " ") { // Spacebar
+            if (!player.isJumping) {
+                player.isJumping = true;
+                player.y -= player.jumpHeight; // Move upward during jump
+            }
         }
     });
 
