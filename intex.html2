@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Ball 4-like Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #87CEEB; /* Light Blue Background */
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+    // Get the canvas and its context
+    var canvas = document.getElementById("gameCanvas");
+    var ctx = canvas.getContext("2d");
+
+    // Set canvas size to cover the whole screen
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Define the player (red ball) properties
+    var player = {
+        x: canvas.width / 2,
+        y: canvas.height - 50,
+        radius: 20,
+        color: "#FF0000",
+        speed: 5
+    };
+
+    // Define the curved green platform
+    var platform = {
+        x: 0,
+        y: canvas.height - 20,
+        width: canvas.width,
+        height: 20,
+        color: "#008000" // Green
+    };
+
+    // Handle keyboard input
+    var rightPressed = false;
+    var leftPressed = false;
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowRight") {
+            rightPressed = true;
+        } else if (event.key === "ArrowLeft") {
+            leftPressed = true;
+        }
+    });
+
+    document.addEventListener("keyup", function(event) {
+        if (event.key === "ArrowRight") {
+            rightPressed = false;
+        } else if (event.key === "ArrowLeft") {
+            leftPressed = false;
+        }
+    });
+
+    // Game loop
+    function gameLoop() {
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the green platform
+        ctx.fillStyle = platform.color;
+        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+
+        // Update player position based on keyboard input
+        if (rightPressed) {
+            player.x += player.speed;
+        } else if (leftPressed) {
+            player.x -= player.speed;
+        }
+
+        // Draw the player
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = player.color;
+        ctx.fill();
+        ctx.closePath();
+
+        // Request the next frame
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Start the game loop
+    gameLoop();
+</script>
+
+</body>
+</html>
