@@ -37,7 +37,7 @@
         color: "#FF0000",
         speed: 5,
         isJumping: false,
-        jumpHeight: 100, // Adjust the jump height as needed
+        jumpHeight: -100, // Adjust the jump height as needed (negative to go up)
     };
 
     // Define the curved green platform
@@ -73,7 +73,7 @@
         if (event.key === " ") { // Spacebar
             if (!player.isJumping) {
                 player.isJumping = true;
-                player.y -= player.jumpHeight; // Move upward during jump
+                player.y += player.jumpHeight; // Move upward during jump
             }
         }
     });
@@ -95,8 +95,8 @@
         }
 
         // Handle jumping
-        if (player.isJumping && player.y < canvas.height - player.radius) {
-            player.y += player.jumpHeight; // Move downward after reaching the jump peak
+        if (player.isJumping && player.y > canvas.height - player.radius - player.jumpHeight) {
+            player.y += player.jumpHeight; // Move upward during jump
         } else {
             player.isJumping = false; // Reset jumping state if on the ground
         }
