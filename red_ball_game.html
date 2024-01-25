@@ -36,8 +36,9 @@
         radius: 20,
         color: "#FF0000",
         speed: 5,
+        jumpHeight: -200, // Adjust the jump height as needed (negative to go up)
+        gravity: 5, // Adjust the gravity as needed (positive to pull down)
         isJumping: false,
-        jumpHeight: -300, // Adjust the jump height as needed (negative to go up)
     };
 
     // Define the curved green platform
@@ -73,7 +74,6 @@
         if (event.key === " ") { // Spacebar
             if (!player.isJumping) {
                 player.isJumping = true;
-                player.y += player.jumpHeight; // Move upward during jump
             }
         }
     });
@@ -95,10 +95,16 @@
         }
 
         // Handle jumping
-        if (player.isJumping && player.y > canvas.height - player.radius - player.jumpHeight) {
+        if (player.isJumping) {
             player.y += player.jumpHeight; // Move upward during jump
-        } else {
-            player.isJumping = false; // Reset jumping state if on the ground
+
+            // Check if player is above the ground level
+            if (player.y < canvas.height - player.radius - platform.height) {
+                player.isJumping = false; // Stop jumping when reaching the ground
+            }
+        } else if (player.y < canvas.height - player.radius - platform.height) {
+            // Apply gravity if not jumping and above the ground level
+            player.y += player.gravity;
         }
 
         // Draw the player
