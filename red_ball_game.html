@@ -181,6 +181,12 @@
             player.isJumping = false;
         }
 
+        // Reset rolling after a short distance
+        if ((player.isRollingLeft || player.isRollingRight) && Math.abs(player.x - canvas.width / 2) > 50) {
+            player.isRollingLeft = false;
+            player.isRollingRight = false;
+        }
+
         draw();
         requestAnimationFrame(gameLoop);
     }
@@ -190,3 +196,4 @@
 
 </body>
 </html>
+
