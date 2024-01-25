@@ -33,8 +33,8 @@
         radius: 20,
         color: "#FF0000",
         speed: 5,
-        jumpHeight: -10,
-        gravity: 1,
+        jumpHeight: -200, // Adjusted jump height
+        gravity: 5, // Adjusted gravity
         isJumping: false,
         isShooting: false,
     };
@@ -63,9 +63,23 @@
     });
 
     document.addEventListener("keydown", function(event) {
-        if (event.key === " " && !player.isJumping) {
+        if (event.key === " " && !player.isJumping && player.y === canvas.height - player.radius - platform.height) {
             player.isJumping = true;
             jump();
+        }
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowRight") {
+            player.speed = 5; // Adjusted speed
+        } else if (event.key === "ArrowLeft") {
+            player.speed = -5; // Adjusted speed
+        }
+    });
+
+    document.addEventListener("keyup", function(event) {
+        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+            player.speed = 0;
         }
     });
 
@@ -149,6 +163,13 @@
 
     function gameLoop() {
         updateBullets();
+        player.x += player.speed;
+
+        // Limit the ball from going under the green surface
+        if (player.y > canvas.height - player.radius - platform.height) {
+            player.y = canvas.height - player.radius - platform.height;
+        }
+
         draw();
         requestAnimationFrame(gameLoop);
     }
