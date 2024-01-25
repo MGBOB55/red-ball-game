@@ -35,7 +35,7 @@
         y: canvas.height - 50,
         radius: 20,
         color: "#FF0000",
-        speed: 5,
+        speed: 10,
         isJumping: false,
         jumpHeight: 30, // Adjust the jump height as needed
     };
@@ -72,8 +72,8 @@
             rightPressed = false;
         } else if (event.key === "ArrowLeft") {
             leftPressed = false;
-        } else if (event.key === " ") { // Spacebar
-            spacePressed = false;
+        } else if (event.key === "Spacebar") { // Spacebar
+            spacePressed = true;
         }
     });
 
