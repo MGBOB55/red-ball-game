@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Ball 4-like Game</title>
+    <title>Gun Shooting Game</title>
     <style>
         body {
             margin: 0;
@@ -21,109 +21,101 @@
 <canvas id="gameCanvas"></canvas>
 
 <script>
-    // Get the canvas and its context
     var canvas = document.getElementById("gameCanvas");
     var ctx = canvas.getContext("2d");
 
-    // Set canvas size to cover the whole screen
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Define the player (red ball) properties
     var player = {
         x: canvas.width / 2,
-        y: canvas.height - 50,
+        y: canvas.height / 2,
         radius: 20,
         color: "#FF0000",
-        speed: 10, // Increased speed
-        jumpHeight: -5, // Adjust the jump height as needed (negative to go up)
-        gravity: 0.5, // Adjust the gravity as needed (positive to pull down)
-        isJumping: false,
+        speed: 10,
+        isShooting: false,
     };
 
-    // Define the curved green platform
-    var platform = {
-        x: 0,
-        y: canvas.height - 20,
-        width: canvas.width,
-        height: 20,
-        color: "#008000" // Green
-    };
+    var bullets = [];
 
-    // Handle keyboard input
-    var rightPressed = false;
-    var leftPressed = false;
-
-    document.addEventListener("keydown", function(event) {
-        if (event.key === "ArrowRight") {
-            rightPressed = true;
-        } else if (event.key === "ArrowLeft") {
-            leftPressed = true;
-        }
+    document.addEventListener("mousemove", function(event) {
+        player.angle = Math.atan2(event.clientY - player.y, event.clientX - player.x);
     });
 
-    document.addEventListener("keyup", function(event) {
-        if (event.key === "ArrowRight") {
-            rightPressed = false;
-        } else if (event.key === "ArrowLeft") {
-            leftPressed = false;
-        }
+    document.addEventListener("mousedown", function(event) {
+        player.isShooting = true;
+        shoot();
     });
 
-    document.addEventListener("keydown", function(event) {
-        if (event.key === " " && !player.isJumping) { // Spacebar
-            player.isJumping = true;
-            jump();
-        }
+    document.addEventListener("mouseup", function(event) {
+        player.isShooting = false;
     });
 
-    // Jump function
-    function jump() {
-        if (player.isJumping) {
-            player.y += player.jumpHeight; // Increment jump height
+    function shoot() {
+        if (player.isShooting) {
+            var bullet = {
+                x: player.x,
+                y: player.y,
+                radius: 5,
+                color: "#000000",
+                speed: 15,
+                angle: player.angle,
+            };
+            bullets.push(bullet);
 
-            // Check if player is above the ground level
-            if (player.y > canvas.height - player.radius - platform.height) {
-                player.isJumping = false; // Stop jumping when reaching the ground
-                player.y = canvas.height - player.radius - platform.height; // Ensure the ball is on the platform
-            } else {
-                setTimeout(function() {
-                    // Apply gravity after a short delay to simulate jump and fall
-                    player.y += player.gravity;
-                    jump();
-                }, 20);
+            // Apply knockback to the player (you can adjust the value)
+            player.x -= Math.cos(player.angle) * 20;
+            player.y -= Math.sin(player.angle) * 20;
+
+            setTimeout(function() {
+                shoot();
+            }, 300); // Adjust the timeout for the rate of fire
+        }
+    }
+
+    function updateBullets() {
+        for (var i = 0; i < bullets.length; i++) {
+            var bullet = bullets[i];
+
+            bullet.x += Math.cos(bullet.angle) * bullet.speed;
+            bullet.y += Math.sin(bullet.angle) * bullet.speed;
+
+            if (bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
+                bullets.splice(i, 1); // Remove bullets that go off-screen
+                i--;
             }
         }
     }
 
-    // Game loop
-    function gameLoop() {
-        // Clear the canvas
+    function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw the green platform
-        ctx.fillStyle = platform.color;
-        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
-
-        // Update player position based on keyboard input
-        if (rightPressed) {
-            player.x += player.speed;
-        } else if (leftPressed) {
-            player.x -= player.speed;
+        // Draw bullets
+        for (var i = 0; i < bullets.length; i++) {
+            var bullet = bullets[i];
+            ctx.beginPath();
+            ctx.arc(bullet.x, bullet.y, bullet.radius, 0, 2 * Math.PI);
+            ctx.fillStyle = bullet.color;
+            ctx.fill();
+            ctx.closePath();
         }
 
-        // Draw the player
+        // Draw player (gun)
         ctx.beginPath();
         ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI);
         ctx.fillStyle = player.color;
         ctx.fill();
         ctx.closePath();
 
-        // Request the next frame
+        requestAnimationFrame(draw);
+    }
+
+    function gameLoop() {
+        updateBullets();
+        draw();
         requestAnimationFrame(gameLoop);
     }
 
-    // Start the game loop
     gameLoop();
 </script>
 
