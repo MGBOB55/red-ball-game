@@ -37,7 +37,8 @@
         gravity: 2,
         isJumping: false,
         isShooting: false,
-        isRolling: false,
+        isRollingLeft: false,
+        isRollingRight: false,
     };
 
     var bullets = [];
@@ -64,18 +65,24 @@
     });
 
     document.addEventListener("keydown", function(event) {
-        if (event.key === " " && !player.isJumping && !player.isRolling) {
+        if (event.key === " " && !player.isJumping) {
             player.isJumping = true;
             jump();
         }
-        if ((event.key === "ArrowRight" || event.key === "ArrowLeft") && !player.isJumping) {
-            player.isRolling = true;
+        if (event.key === "ArrowRight" && !player.isJumping) {
+            player.isRollingRight = true;
+        }
+        if (event.key === "ArrowLeft" && !player.isJumping) {
+            player.isRollingLeft = true;
         }
     });
 
     document.addEventListener("keyup", function(event) {
-        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-            player.isRolling = false;
+        if (event.key === "ArrowRight") {
+            player.isRollingRight = false;
+        }
+        if (event.key === "ArrowLeft") {
+            player.isRollingLeft = false;
         }
     });
 
@@ -159,21 +166,19 @@
 
     function gameLoop() {
         updateBullets();
-        
+
         // Rolling effect
-        if (player.isRolling) {
+        if (player.isRollingRight) {
             player.x += player.speed;
+        }
+        if (player.isRollingLeft) {
+            player.x -= player.speed;
         }
 
         // Limit the ball from going under the green surface
         if (player.y > canvas.height - player.radius - platform.height) {
             player.y = canvas.height - player.radius - platform.height;
             player.isJumping = false;
-        }
-
-        // Reset rolling after a short distance
-        if (player.isRolling && Math.abs(player.x - canvas.width / 2) > 50) {
-            player.isRolling = false;
         }
 
         draw();
