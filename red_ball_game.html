@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gun Shooting Game with Physics</title>
+    <title>Red Ball Game with Shooting</title>
     <style>
         body {
             margin: 0;
@@ -32,7 +32,7 @@
         y: canvas.height - 50,
         radius: 20,
         color: "#FF0000",
-        speed: 10,
+        speed: 5,
         jumpHeight: -10,
         gravity: 1,
         isJumping: false,
@@ -137,7 +137,7 @@
             ctx.closePath();
         }
 
-        // Draw player (gun)
+        // Draw player (red ball)
         ctx.beginPath();
         ctx.arc(player.x, player.y, player.radius, 0, 2 * Math.PI);
         ctx.fillStyle = player.color;
