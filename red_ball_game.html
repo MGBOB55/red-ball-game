@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gun Shooting Game</title>
+    <title>Gun Shooting Game with Physics</title>
     <style>
         body {
             margin: 0;
@@ -29,14 +29,25 @@
 
     var player = {
         x: canvas.width / 2,
-        y: canvas.height / 2,
+        y: canvas.height - 50,
         radius: 20,
         color: "#FF0000",
         speed: 10,
+        jumpHeight: -10,
+        gravity: 1,
+        isJumping: false,
         isShooting: false,
     };
 
     var bullets = [];
+
+    var platform = {
+        x: 0,
+        y: canvas.height - 20,
+        width: canvas.width,
+        height: 20,
+        color: "#008000" // Green
+    };
 
     document.addEventListener("mousemove", function(event) {
         player.angle = Math.atan2(event.clientY - player.y, event.clientX - player.x);
@@ -51,6 +62,29 @@
         player.isShooting = false;
     });
 
+    document.addEventListener("keydown", function(event) {
+        if (event.key === " " && !player.isJumping) {
+            player.isJumping = true;
+            jump();
+        }
+    });
+
+    function jump() {
+        if (player.isJumping) {
+            player.y += player.jumpHeight;
+
+            if (player.y > canvas.height - player.radius - platform.height) {
+                player.isJumping = false;
+                player.y = canvas.height - player.radius - platform.height;
+            } else {
+                setTimeout(function() {
+                    player.y += player.gravity;
+                    jump();
+                }, 20);
+            }
+        }
+    }
+
     function shoot() {
         if (player.isShooting) {
             var bullet = {
@@ -63,13 +97,12 @@
             };
             bullets.push(bullet);
 
-            // Apply knockback to the player (you can adjust the value)
             player.x -= Math.cos(player.angle) * 20;
             player.y -= Math.sin(player.angle) * 20;
 
             setTimeout(function() {
                 shoot();
-            }, 300); // Adjust the timeout for the rate of fire
+            }, 300);
         }
     }
 
@@ -81,7 +114,7 @@
             bullet.y += Math.sin(bullet.angle) * bullet.speed;
 
             if (bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
-                bullets.splice(i, 1); // Remove bullets that go off-screen
+                bullets.splice(i, 1);
                 i--;
             }
         }
@@ -89,6 +122,10 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the green platform
+        ctx.fillStyle = platform.color;
+        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
 
         // Draw bullets
         for (var i = 0; i < bullets.length; i++) {
