@@ -35,6 +35,7 @@
         speed: 5,
         jumpHeight: -20,
         gravity: 2,
+        bounceFactor: 0.7, // Adjust this value for bouncing effect
         isJumping: false,
         isShooting: false,
         isRollingLeft: false,
@@ -167,6 +168,11 @@
     function gameLoop() {
         updateBullets();
 
+        // Bounce off each edge of the screen
+        if (player.x - player.radius < 0 || player.x + player.radius > canvas.width) {
+            player.speed *= -player.bounceFactor;
+        }
+
         // Rolling effect
         if (player.isRollingRight) {
             player.x += player.speed;
@@ -187,6 +193,9 @@
             player.isRollingRight = false;
         }
 
+        // Apply gravity
+        player.y += player.gravity;
+
         draw();
         requestAnimationFrame(gameLoop);
     }
@@ -196,3 +205,4 @@
 
 </body>
 </html>
+
